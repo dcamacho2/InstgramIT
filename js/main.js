@@ -27,8 +27,10 @@ var PictureList = React.createClass({
 	},
 	componentDidMount: function() {
 		//this occurs when component loads
-		var self = this;
-		var url = 'https://api.instagram.com/v1/media/popular?client_id=' + this.props.apiKey + '&callback=?';
+		// var self = this; <------------- this is to remember scoping of this, by using binding we get same results and cleaner code!
+
+		//the url can be changed to other instagram endpoints, depending on what you want
+		var url = 'https://api.instagram.com/v1/tags/' + this.props.tag + '/media/recent?client_id=' + this.props.apiKey + '&callback=?';
 		console.log(url);
 
 		$.getJSON(url, function(result) {
@@ -46,10 +48,10 @@ var PictureList = React.createClass({
 			});
 
 			//here we must update the component, which will cause a render
-			self.setState({
+			this.setState({
 				pictures: pictures
 			});
-		});
+		}.bind(this));
 	},
 	pictureClick: function(id) {
 		var favorites = this.state.favorites,
@@ -99,16 +101,16 @@ var PictureList = React.createClass({
 		});
 	},
 	render: function() {
-		var self = this;
+		// var self = this;
 		var pictures = this.state.pictures.map(function(e) {
-			return <Picture pic={e.id} src={e.src} title={e.title} favorite={e.favorite} onClick={self.pictureClick} key={e.id} />
-		});
+			return <Picture pic={e.id} src={e.src} title={e.title} favorite={e.favorite} onClick={this.pictureClick} key={e.id} />
+		}.bind(this));
 		if(!pictures.length) {
 			pictures = <p> Loading Images ... </p>;
 		}
 		var favorites= this.state.favorites.map(function(e) {
-			return <Picture pic={e.id} src={e.src} title={e.title} favorite={true} onClick={self.pictureClick} key={e.id} />
-		})
+			return <Picture pic={e.id} src={e.src} title={e.title} favorite={true} onClick={this.pictureClick} key={e.id} />
+		}.bind(this));
 		if(!favorites.length) {
 			favorites = <p> Click on an image to mark as favorite! </p>;
 		}
@@ -125,7 +127,7 @@ var PictureList = React.createClass({
 });
 
 React.render(
-	<PictureList apiKey="4680f1d6832f41cb99bd08d7283cb065" />,
+	<PictureList apiKey="4680f1d6832f41cb99bd08d7283cb065" tag="adcade" />,
 	document.body
 );
 
